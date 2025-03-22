@@ -9,6 +9,10 @@ Event Organizer is a C# application designed to help users manage events and par
 - Calculate total costs, fees, and surplus/deficit for events
 - Display participant information including address details
 
+## Tech Stack
+- .NET Framework 4.7.2
+- C#
+
 ## Installation
 1. Clone the repository:
    ```bash
