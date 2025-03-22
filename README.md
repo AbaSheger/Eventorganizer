@@ -25,6 +25,9 @@ Event Organizer is a C# application designed to help users manage events and par
 4. View the list of participants and manage their information.
 5. Check the event economy section to see the total costs, fees, and surplus/deficit.
 
+## Screenshot
+![Screenshot](screenshot.png)
+
 ## Contributing
 Contributions are welcome! Please follow these guidelines:
 1. Fork the repository.
