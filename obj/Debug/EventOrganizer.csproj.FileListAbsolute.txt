@@ -1,0 +1,10 @@
+C:\Users\abbas\source\repos\EventOrganizer\bin\Debug\EventOrganizer.exe.config
+C:\Users\abbas\source\repos\EventOrganizer\bin\Debug\EventOrganizer.exe
+C:\Users\abbas\source\repos\EventOrganizer\bin\Debug\EventOrganizer.pdb
+C:\Users\abbas\source\repos\EventOrganizer\obj\Debug\EventOrganizer.csproj.AssemblyReference.cache
+C:\Users\abbas\source\repos\EventOrganizer\obj\Debug\EventOrganizer.MainForm.resources
+C:\Users\abbas\source\repos\EventOrganizer\obj\Debug\EventOrganizer.Properties.Resources.resources
+C:\Users\abbas\source\repos\EventOrganizer\obj\Debug\EventOrganizer.csproj.GenerateResource.cache
+C:\Users\abbas\source\repos\EventOrganizer\obj\Debug\EventOrganizer.csproj.CoreCompileInputs.cache
+C:\Users\abbas\source\repos\EventOrganizer\obj\Debug\EventOrganizer.exe
+C:\Users\abbas\source\repos\EventOrganizer\obj\Debug\EventOrganizer.pdb
