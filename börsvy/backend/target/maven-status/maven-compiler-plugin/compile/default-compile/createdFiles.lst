@@ -1,0 +1,5 @@
+com\borsvy\model\Stock.class
+com\borsvy\controller\StockController.class
+com\borsvy\BorsvyApplication.class
+com\borsvy\service\StockService.class
+com\borsvy\repository\StockRepository.class
