@@ -17,10 +17,10 @@ function StockTable({ stocks: initialStocks }) {
      * @returns {Promise<void>} - A promise that resolves when the operation is complete.
      * @throws {Error} Logs an error to the console if the request fails.
      *
-     * @important Ensure the backend API is running at `http://localhost:8082` 
+     * @important Ensure the backend API is running at `http://localhost:8082`
      * and the endpoint `/api/stocks/favorites/:symbol` is correctly configured.
-     * 
-     * @important This function assumes `stocks` is an array of stock objects 
+     *
+     * @important This function assumes `stocks` is an array of stock objects
      * and `setStocks` is a state updater function available in the component's scope.
      */
     const addToFavorites = async (symbol) => {
@@ -31,7 +31,7 @@ function StockTable({ stocks: initialStocks }) {
             });
 
             // Update the local state to mark the stock as a favorite
-            const updatedStocks = stocks.map(s =>  
+            const updatedStocks = stocks.map((s) =>
                 s.symbol === symbol ? { ...s, favorite: true } : s
             );
 
@@ -48,7 +48,7 @@ function StockTable({ stocks: initialStocks }) {
             await fetch(`http://localhost:8082/api/stocks/favorites/${symbol}`, {
                 method: 'DELETE',
             });
-            const updatedStocks = stocks.map(s => 
+            const updatedStocks = stocks.map((s) =>
                 s.symbol === symbol ? { ...s, favorite: false } : s
             );
             setStocks(updatedStocks);
@@ -75,11 +75,11 @@ function StockTable({ stocks: initialStocks }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {stocks.map(stock => (
+                    {stocks.map((stock) => (
                         <React.Fragment key={stock.symbol}>
                             <tr className={expandedStock === stock.symbol ? 'expanded' : ''}>
                                 <td>
-                                    <button 
+                                    <button
                                         className="expand-button"
                                         onClick={() => toggleExpand(stock.symbol)}
                                     >
@@ -89,16 +89,21 @@ function StockTable({ stocks: initialStocks }) {
                                 </td>
                                 <td>{stock.name}</td>
                                 <td className="price">${stock.price.toFixed(2)}</td>
-                                <td className={`change ${stock.change >= 0 ? 'positive' : 'negative'}`}>
-                                    {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}%
+                                <td
+                                    className={`change ${stock.change >= 0 ? 'positive' : 'negative'}`}
+                                >
+                                    {stock.change >= 0 ? '+' : ''}
+                                    {stock.change.toFixed(2)}%
                                 </td>
                                 <td>{stock.sector}</td>
                                 <td>
-                                    <button 
+                                    <button
                                         className={`favorite-button ${stock.favorite ? 'favorited' : ''}`}
-                                        onClick={() => stock.favorite ? 
-                                            removeFromFavorites(stock.symbol) : 
-                                            addToFavorites(stock.symbol)}
+                                        onClick={() =>
+                                            stock.favorite
+                                                ? removeFromFavorites(stock.symbol)
+                                                : addToFavorites(stock.symbol)
+                                        }
                                     >
                                         {stock.favorite ? '★' : '☆'}
                                     </button>
@@ -119,7 +124,15 @@ function StockTable({ stocks: initialStocks }) {
                                                 </div>
                                                 <div>
                                                     <strong>Website:</strong>
-                                                    <p><a href={stock.website} target="_blank" rel="noopener noreferrer">{stock.website}</a></p>
+                                                    <p>
+                                                        <a
+                                                            href={stock.website}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            {stock.website}
+                                                        </a>
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -135,7 +148,7 @@ function StockTable({ stocks: initialStocks }) {
 }
 
 StockTable.propTypes = {
-    stocks: PropTypes.arrayOf(StockShape).isRequired
+    stocks: PropTypes.arrayOf(StockShape).isRequired,
 };
 
 export default StockTable;

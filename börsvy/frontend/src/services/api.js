@@ -5,8 +5,10 @@ export const stockService = {
         // Check if query is a stock symbol (uppercase letters only)
         const isSymbol = /^[A-Z]+$/.test(query);
         const endpoint = isSymbol ? 'symbol' : 'company';
-        
-        const response = await fetch(`${API_URL}/api/stocks/search/${endpoint}/${encodeURIComponent(query)}`);
+
+        const response = await fetch(
+            `${API_URL}/api/stocks/search/${endpoint}/${encodeURIComponent(query)}`
+        );
         if (!response.ok) {
             throw new Error('Stock not found');
         }
@@ -15,7 +17,9 @@ export const stockService = {
 
     async searchCompanies(query) {
         try {
-            const response = await fetch(`${API_URL}/api/stocks/search/company/${encodeURIComponent(query)}`);
+            const response = await fetch(
+                `${API_URL}/api/stocks/search/company/${encodeURIComponent(query)}`
+            );
             if (!response.ok) {
                 return []; // Return empty array for any error
             }
@@ -53,7 +57,7 @@ export const stockService = {
                     price: stock.price,
                     change: stock.change,
                     changePercent: stock.changePercent,
-                    favorite: true
+                    favorite: true,
                 }),
             });
 
@@ -71,7 +75,12 @@ export const stockService = {
             // Check if there's content to parse
             const contentLength = response.headers.get('content-length');
             const contentType = response.headers.get('content-type');
-            if (contentLength && parseInt(contentLength) > 0 && contentType && contentType.includes('application/json')) {
+            if (
+                contentLength &&
+                parseInt(contentLength) > 0 &&
+                contentType &&
+                contentType.includes('application/json')
+            ) {
                 return response.json();
             }
             return true; // Return success but no data
@@ -92,7 +101,12 @@ export const stockService = {
         // Check if there's content to parse
         const contentLength = response.headers.get('content-length');
         const contentType = response.headers.get('content-type');
-        if (contentLength && parseInt(contentLength) > 0 && contentType && contentType.includes('application/json')) {
+        if (
+            contentLength &&
+            parseInt(contentLength) > 0 &&
+            contentType &&
+            contentType.includes('application/json')
+        ) {
             return response.json();
         }
         return true; // Return success but no data

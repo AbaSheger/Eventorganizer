@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { stockService } from '../../services/api';
 import { EXAMPLE_SYMBOLS, ERROR_MESSAGES } from '../../constants';
-import '../../styles/StockSearch.css';
-
 // Common stock search patterns
 const COMMON_SEARCHES = {
     tech: ['AAPL', 'GOOGL', 'MSFT', 'META', 'NVDA', 'AMD', 'INTC', 'CRM', 'ADBE', 'PYPL'],
@@ -12,7 +10,7 @@ const COMMON_SEARCHES = {
     retail: ['WMT', 'AMZN', 'TGT', 'HD', 'COST', 'LOW', 'MCD', 'SBUX', 'NKE', 'TJX'],
     energy: ['XOM', 'CVX', 'COP', 'SLB', 'EOG', 'MPC', 'PSX', 'VLO', 'OXY', 'PXD'],
     automotive: ['TSLA', 'F', 'GM', 'TM', 'HMC', 'STLA', 'RIVN', 'LCID', 'NIO', 'XPEV'],
-    popular: ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'JPM', 'V', 'WMT']
+    popular: ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'JPM', 'V', 'WMT'],
 };
 
 function StockSearch({ onStockFound }) {
@@ -122,19 +120,20 @@ function StockSearch({ onStockFound }) {
 
     const renderExampleSearches = () => {
         if (!showExamples) return null;
-
         return (
-            <div className="example-searches">
-                <h4>Popular Searches:</h4>
-                <div className="search-categories">
+            <div className="mt-4">
+                <h4 className="text-sm font-medium text-text-secondary mb-2">Popular Searches:</h4>
+                <div className="space-y-4">
                     {Object.entries(COMMON_SEARCHES).map(([category, symbols]) => (
-                        <div key={category} className="search-category">
-                            <h5>{category.charAt(0).toUpperCase() + category.slice(1)}</h5>
-                            <div className="symbol-list">
-                                {symbols.map(symbol => (
+                        <div key={category} className="rounded-lg bg-bg-secondary p-3">
+                            <h5 className="text-sm font-medium text-text-primary mb-2">
+                                {category.charAt(0).toUpperCase() + category.slice(1)}
+                            </h5>
+                            <div className="flex flex-wrap gap-2">
+                                {symbols.map((symbol) => (
                                     <button
                                         key={symbol}
-                                        className="example-symbol"
+                                        className="px-3 py-1 text-sm rounded-full bg-bg-tertiary hover:bg-border-light text-text-primary transition-colors"
                                         onClick={() => fillSearchInput(symbol)}
                                     >
                                         {symbol}
@@ -149,37 +148,43 @@ function StockSearch({ onStockFound }) {
     };
 
     return (
-        <div className="stock-search">
-            <div className="search-input-container">
+        <div className="w-full p-4 bg-white rounded-lg shadow-md">
+            <div className="relative">
                 <input
                     type="text"
                     value={searchTerm}
                     onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
                     placeholder="Enter stock symbol (e.g., AAPL) or company name (e.g., Apple)"
-                    className="search-input"
+                    className="w-full px-4 py-3 rounded-lg border border-border-light focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
                 />
                 <button
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className="search-button"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1.5 bg-primary-blue text-white rounded-md hover:bg-primary-dark transition-colors disabled:bg-neutral-gray disabled:cursor-not-allowed"
                 >
                     {isLoading ? 'Searching...' : 'Search'}
                 </button>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && (
+                <div className="mt-2 px-3 py-2 bg-negative-red/10 border border-negative-red/30 rounded-md text-negative-red text-sm">
+                    {error}
+                </div>
+            )}
 
             {searchResults.length > 0 && (
-                <div className="search-results">
+                <div className="mt-3 border border-border-light rounded-lg overflow-hidden divide-y divide-border-light">
                     {searchResults.map((result) => (
                         <div
                             key={result.symbol}
-                            className="search-result"
+                            className="p-3 hover:bg-bg-secondary cursor-pointer transition-colors"
                             onClick={() => handleCompanySelect(result.symbol)}
                         >
-                            <span className="symbol">{result.symbol}</span>
-                            <span className="name">{result.name}</span>
+                            <span className="font-medium text-text-primary mr-2">
+                                {result.symbol}
+                            </span>
+                            <span className="text-text-secondary text-sm">{result.name}</span>
                         </div>
                     ))}
                 </div>
@@ -191,7 +196,7 @@ function StockSearch({ onStockFound }) {
 }
 
 StockSearch.propTypes = {
-    onStockFound: PropTypes.func.isRequired
+    onStockFound: PropTypes.func.isRequired,
 };
 
 export default StockSearch;
