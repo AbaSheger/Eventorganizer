@@ -53,16 +53,28 @@ export const stockService = {
                     price: stock.price,
                     change: stock.change,
                     changePercent: stock.changePercent,
-                    isFavorite: true
+                    favorite: true
                 }),
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to add stock to favorites');
+                // Check if there's JSON content before parsing
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to add stock to favorites');
+                } else {
+                    throw new Error('Failed to add stock to favorites');
+                }
             }
 
-            return response.json();
+            // Check if there's content to parse
+            const contentLength = response.headers.get('content-length');
+            const contentType = response.headers.get('content-type');
+            if (contentLength && parseInt(contentLength) > 0 && contentType && contentType.includes('application/json')) {
+                return response.json();
+            }
+            return true; // Return success but no data
         } catch (error) {
             console.error('Error adding to favorites:', error);
             throw error;
@@ -76,6 +88,13 @@ export const stockService = {
         if (!response.ok) {
             throw new Error('Failed to remove stock from favorites');
         }
-        return response.json();
+
+        // Check if there's content to parse
+        const contentLength = response.headers.get('content-length');
+        const contentType = response.headers.get('content-type');
+        if (contentLength && parseInt(contentLength) > 0 && contentType && contentType.includes('application/json')) {
+            return response.json();
+        }
+        return true; // Return success but no data
     },
 };

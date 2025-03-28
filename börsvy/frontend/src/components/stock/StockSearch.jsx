@@ -107,6 +107,13 @@ function StockSearch({ onStockFound }) {
         }
     };
 
+    // New function to just fill the search input without performing search
+    const fillSearchInput = (symbol) => {
+        setSearchTerm(symbol);
+        setSearchResults([]);
+        setShowExamples(false);
+    };
+
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !searchResults.length) {
             handleSearch();
@@ -128,7 +135,7 @@ function StockSearch({ onStockFound }) {
                                     <button
                                         key={symbol}
                                         className="example-symbol"
-                                        onClick={() => handleCompanySelect(symbol)}
+                                        onClick={() => fillSearchInput(symbol)}
                                     >
                                         {symbol}
                                     </button>
