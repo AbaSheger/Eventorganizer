@@ -1,30 +1,17 @@
-# BörsVy - Real-time Stock Market Tracker
+# BörsVy Stock Analysis Platform
 
-A graduation project demonstrating a real-time stock market tracking application built with React and Spring Boot.
+A web-based stock analysis platform built with React, Spring Boot, and Finnhub API, featuring AI analysis powered by Gemini 1.5 Pro.
 
-## Features
+## Project Structure
 
-- Real-time stock price tracking
-- Search functionality for stock symbols
-- Favorite stocks management
-- Responsive design
-- Real-time price updates
+- **Frontend**: React with JavaScript (JSX) + Tailwind CSS
+- **Backend**: Spring Boot (Java) REST API
+- **Database**: PostgreSQL
+- **External APIs**: Finnhub API for stock data, Gemini 1.5 Pro for AI analysis
 
-## Tech Stack
+## Running the Application
 
-- Frontend: React.js
-- Backend: Spring Boot
-- API: Alpha Vantage (Stock Market Data)
-
-## Prerequisites
-
-- Node.js (v14 or higher)
-- Java JDK 17 or higher
-- Maven
-
-## Getting Started
-
-### Frontend Setup
+### Frontend
 
 1. Navigate to the frontend directory:
 ```bash
@@ -38,12 +25,12 @@ npm install
 
 3. Start the development server:
 ```bash
-npm start
+npm run dev
 ```
 
-The application will be available at `http://localhost:3000`
+The frontend will be available at http://localhost:5173
 
-### Backend Setup
+### Backend
 
 1. Navigate to the backend directory:
 ```bash
@@ -52,55 +39,55 @@ cd backend
 
 2. Build the project:
 ```bash
-mvn clean install
+./mvnw clean package
 ```
 
 3. Run the application:
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
-The API will be available at `http://localhost:8082`
+The backend API will be available at http://localhost:8080
 
-## API Endpoints
+## Deployment
 
-- `GET /api/stocks/search/{symbol}` - Search for a stock
-- `GET /api/stocks/favorites` - Get favorite stocks
-- `POST /api/stocks/favorites` - Add a stock to favorites
-- `DELETE /api/stocks/favorites/{symbol}` - Remove a stock from favorites
+### Frontend (Vercel)
 
-## Demo Instructions
-
-1. Start both frontend and backend servers
-2. Open the application in your browser
-3. Search for a stock symbol (e.g., AAPL, MSFT, GOOGL)
-4. The stock will be added to your favorites list
-5. Real-time price updates will be displayed
-
-## Project Structure
-
-```
-borsvy/
-├── frontend/           # React frontend application
-│   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── types/        # Type definitions
-│   │   └── App.jsx       # Main application component
-│   └── package.json
-└── backend/           # Spring Boot backend application
-    └── src/
-        └── main/
-            └── java/
-                └── com/borsvy/
-                    ├── controller/    # REST controllers
-                    ├── service/       # Business logic
-                    └── model/         # Data models
+1. Install Vercel CLI:
+```bash
+npm install -g vercel
 ```
 
-## Author
+2. Deploy to Vercel:
+```bash
+cd frontend
+vercel
+```
 
-[Abenezer Anglo]
+### Backend (Fly.io)
 
-## License
+1. Install Flyctl:
+```bash
+curl -L https://fly.io/install.sh | sh
+```
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+2. Log in to Fly.io:
+```bash
+fly auth login
+```
+
+3. Create a fly.toml file in the backend directory
+4. Deploy the backend:
+```bash
+cd backend
+fly launch
+```
+
+## API Keys
+
+To use the application with full functionality, you'll need:
+
+1. A Finnhub API key (https://finnhub.io/)
+2. A Gemini API key (https://ai.google.dev/)
+
+Add these keys to the `application.properties` file in the backend.

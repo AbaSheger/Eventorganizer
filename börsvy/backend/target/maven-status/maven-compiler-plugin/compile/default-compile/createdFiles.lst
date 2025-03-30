@@ -1,5 +1,4 @@
-com\borsvy\model\Stock.class
-com\borsvy\controller\StockController.class
-com\borsvy\BorsvyApplication.class
-com\borsvy\service\StockService.class
-com\borsvy\repository\StockRepository.class
+com\borsvy\config\RestTemplateConfig.class
+com\borsvy\model\StockPrice.class
+com\borsvy\model\StockAnalysis.class
+com\borsvy\config\RestTemplateConfig$RateLimitException.class

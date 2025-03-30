@@ -1,97 +1,229 @@
-import React, { useState, useEffect } from 'react';
-import StockSearch from './components/stock/StockSearch';
-import StockTable from './components/stock/StockTable';
-import { stockService } from './services/api';
-import { APP_NAME, APP_DESCRIPTION } from './constants';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import StockSearch from './components/StockSearch';
+import StockList from './components/StockList';
+import Favorites from './components/Favorites';
+import Analysis from './components/Analysis';
+import WelcomeScreen from './components/WelcomeScreen';
+import { ConfigProvider } from 'antd';
+import './App.css';
 
 function App() {
-    const [stocks, setStocks] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [stocks, setStocks] = useState([]);
+  const [selectedStock, setSelectedStock] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+  const [favoritesError, setFavoritesError] = useState(null);
 
-    useEffect(() => {
-        fetchFavorites();
-    }, []);
-
+  // Only fetch favorites on component mount
+  useEffect(() => {
     const fetchFavorites = async () => {
-        try {
-            setIsLoading(true);
-            const favorites = await stockService.getFavorites();
-            setStocks(favorites.map((stock) => ({ ...stock, isFavorite: true })));
-        } catch (error) {
-            console.error('Error fetching favorites:', error);
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
+      try {
+        const favoritesResponse = await axios.get('http://localhost:8080/api/favorites');
+        setFavorites(favoritesResponse.data);
+      } catch (err) {
+        console.error('Error fetching favorites:', err);
+        if (err.response?.status === 403 || err.message.includes('Network Error')) {
+          setError('Cannot connect to the backend server. Please ensure it is running.');
         }
+      }
     };
 
-    const handleStockFound = (stock) => {
-        setStocks((prevStocks) => {
-            const exists = prevStocks.some((s) => s.symbol === stock.symbol);
-            if (exists) {
-                return prevStocks.map((s) =>
-                    s.symbol === stock.symbol ? { ...stock, isFavorite: s.isFavorite } : s
-                );
-            }
-            return [{ ...stock, isFavorite: false }, ...prevStocks];
-        });
-    };
+    fetchFavorites();
+  }, []);
 
-    const handleStockUpdate = (updatedStock) => {
-        setStocks((prevStocks) =>
-            prevStocks.map((stock) => (stock.symbol === updatedStock.symbol ? updatedStock : stock))
-        );
-    };
-
-    if (isLoading) {
-        return (
-            <div className="min-h-screen bg-bg-secondary p-4">
-                <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md text-center">
-                    <div className="animate-pulse text-text-primary">
-                        Loading your favorite stocks...
-                    </div>
-                </div>
-            </div>
-        );
+  const handleSearch = async (searchResults) => {
+    try {
+      setStocks(searchResults);
+      setSelectedStock(null);
+      setError(null);
+    } catch (err) {
+      console.error('Search error:', err);
+      setError('Failed to fetch search results. Please try again.');
+      setStocks([]);
+      setSelectedStock(null);
     }
+  };
 
-    if (error) {
-        return (
-            <div className="min-h-screen bg-bg-secondary p-4">
-                <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-                    <div className="p-4 bg-negative-red/10 border border-negative-red/30 rounded-md text-negative-red">
-                        Error: {error}
-                    </div>
-                </div>
-            </div>
-        );
+  const handleStockSelect = (stock) => {
+    setSelectedStock(stock);
+    setError(null);
+  };
+
+  const toggleFavorite = async (stock) => {
+    try {
+      const isFavorite = favorites.some(f => f.symbol === stock.symbol);
+      if (isFavorite) {
+        await axios.delete(`http://localhost:8080/api/favorites/${stock.symbol}`);
+        setFavorites(favorites.filter(f => f.symbol !== stock.symbol));
+      } else {
+        await axios.post('http://localhost:8080/api/favorites', stock);
+        setFavorites([...favorites, stock]);
+      }
+      setFavoritesError(null);
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+      setFavoritesError('Failed to update favorites. Please try again.');
     }
+  };
 
-    return (
-        <div className="min-h-screen bg-bg-secondary">
-            <header className="sticky top-0 bg-white shadow-sm z-10 p-4">
-                <div className="w-full max-w-4xl mx-auto">
-                    <h1 className="text-xl font-semibold text-primary-blue">{APP_NAME}</h1>
-                    <p className="text-sm text-text-secondary">{APP_DESCRIPTION}</p>
-                </div>
-            </header>
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorBgContainer: '#1a1a1a',
+          colorBgLayout: '#111111',
+          colorText: '#e6e6e6',
+          colorTextSecondary: '#a3a3a3',
+          colorBorder: '#333333',
+          colorPrimary: '#3b82f6',
+          colorPrimaryHover: '#60a5fa',
+          colorPrimaryActive: '#2563eb',
+          colorBgElevated: '#1a1a1a',
+          colorBgSpotlight: '#262626',
+          colorBgMask: 'rgba(0, 0, 0, 0.75)',
+        },
+        components: {
+          Card: {
+            colorBgContainer: '#1a1a1a',
+            colorBorder: '#333333',
+          },
+          Table: {
+            colorBgContainer: '#1a1a1a',
+            colorBgHeader: '#262626',
+            colorBorder: '#333333',
+            colorText: '#e6e6e6',
+            colorTextSecondary: '#a3a3a3',
+          },
+          Button: {
+            colorBgContainer: '#262626',
+            colorBorder: '#333333',
+            colorText: '#e6e6e6',
+            colorPrimary: '#3b82f6',
+            colorPrimaryHover: '#60a5fa',
+            colorPrimaryActive: '#2563eb',
+          },
+          Input: {
+            colorBgContainer: '#262626',
+            colorBorder: '#333333',
+            colorText: '#e6e6e6',
+            colorTextPlaceholder: '#666666',
+          },
+          Select: {
+            colorBgContainer: '#262626',
+            colorBorder: '#333333',
+            colorText: '#e6e6e6',
+            colorTextPlaceholder: '#666666',
+          },
+          Modal: {
+            colorBgContainer: '#1a1a1a',
+            colorBgMask: 'rgba(0, 0, 0, 0.75)',
+            colorText: '#e6e6e6',
+            colorTextSecondary: '#a3a3a3',
+          },
+          Drawer: {
+            colorBgContainer: '#1a1a1a',
+            colorBgMask: 'rgba(0, 0, 0, 0.75)',
+            colorText: '#e6e6e6',
+            colorTextSecondary: '#a3a3a3',
+          },
+          Tooltip: {
+            colorBgContainer: '#262626',
+            colorText: '#e6e6e6',
+          },
+          Dropdown: {
+            colorBgContainer: '#1a1a1a',
+            colorText: '#e6e6e6',
+          },
+          Menu: {
+            colorBgContainer: '#1a1a1a',
+            colorText: '#e6e6e6',
+            colorTextSecondary: '#a3a3a3',
+          },
+          Tabs: {
+            colorBgContainer: '#1a1a1a',
+            colorText: '#e6e6e6',
+            colorTextSecondary: '#a3a3a3',
+          },
+          Tag: {
+            colorBgContainer: '#262626',
+            colorText: '#e6e6e6',
+            colorBorder: '#333333',
+          },
+          Alert: {
+            colorBgContainer: '#262626',
+            colorText: '#e6e6e6',
+            colorTextSecondary: '#a3a3a3',
+          },
+          Badge: {
+            colorBgContainer: '#262626',
+            colorText: '#e6e6e6',
+          },
+          Progress: {
+            colorBgContainer: '#262626',
+            colorText: '#e6e6e6',
+          },
+          Timeline: {
+            colorBgContainer: '#1a1a1a',
+            colorText: '#e6e6e6',
+            colorTextSecondary: '#a3a3a3',
+          },
+          Spin: {
+            colorBgContainer: '#1a1a1a',
+            colorText: '#e6e6e6',
+          },
+        },
+      }}
+    >
+      <div className="min-h-screen bg-[#111111]">
+        <div className="container mx-auto px-4 py-8">
+          <StockSearch onSearch={handleSearch} isLoading={isLoading} />
+          
+          {error && (
+            <div className="bg-red-900/50 border border-red-500 rounded-xl p-4 mt-4">
+              <p className="text-red-200 font-medium">{error}</p>
+            </div>
+          )}
 
-            <main className="container mx-auto max-w-4xl p-4 space-y-6">
-                <StockSearch onStockFound={handleStockFound} />
+          {favoritesError && (
+            <div className="bg-red-900/50 border border-red-500 rounded-xl p-4 mt-4">
+              <p className="text-red-200 font-medium">{favoritesError}</p>
+            </div>
+          )}
 
-                {stocks.length > 0 ? (
-                    <StockTable stocks={stocks} onStockUpdate={handleStockUpdate} />
-                ) : (
-                    <div className="w-full p-8 bg-white rounded-lg shadow-md text-center">
-                        <p className="text-text-secondary">
-                            No stocks added yet. Search for a stock symbol above to get started!
-                        </p>
-                    </div>
-                )}
-            </main>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
+            <div className="lg:col-span-1">
+              {stocks.length > 0 ? (
+                <StockList
+                  stocks={stocks}
+                  selectedStock={selectedStock}
+                  onSelectStock={handleStockSelect}
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                  isLoading={isLoading}
+                />
+              ) : null}
+            </div>
+            
+            <div className="lg:col-span-3 space-y-8">
+              <Favorites
+                favorites={favorites}
+                onSelectStock={setSelectedStock}
+                onToggleFavorite={toggleFavorite}
+              />
+              
+              {selectedStock ? (
+                <Analysis selectedStock={selectedStock} />
+              ) : !stocks.length ? (
+                <WelcomeScreen />
+              ) : null}
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </ConfigProvider>
+  );
 }
 
 export default App;
